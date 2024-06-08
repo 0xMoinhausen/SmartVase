@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "ultrasonic_sensor.h"
+#include "utils.h"
 
 #define Debug true
 // #define debug_print(format, ...) \ 
@@ -14,6 +15,7 @@ void setup() {
   // TODO Baudrate ändern
   Serial.begin(9800);
   setupUltrasonicSensor(ultrasonicSensor);
+
 }
 
 void loop() {
