@@ -7,8 +7,8 @@
  * @brief Structure representing an ultrasonic sensor with its associated pins.
  */
 typedef const struct UltrasonicSensor {
-    u_int8_t echo_pin;
-    u_int8_t trigger_pin;
+    uint8_t echo_pin;
+    uint8_t trigger_pin;
 } ULTRASONIC_SENSOR;
 
 /**
@@ -24,7 +24,7 @@ void setupUltrasonicSensor(ULTRASONIC_SENSOR ultrasonicSensor);
  * @param ultrasonicSensor Pointer to an UltrasonicSensor structure containing the pin configuration.
  * @return Distance measured in centimeters.
  */
-int getUltrasonicDistanceInCm(ULTRASONIC_SENSOR ultrasonicSensor);
+float getUltrasonicDistanceInCm(ULTRASONIC_SENSOR ultrasonicSensor);
 
 /**
  * @brief Measures the time taken for the ultrasonic signal to bounce back and returns it in microseconds.

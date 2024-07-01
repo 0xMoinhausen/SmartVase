@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Vase Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            color: #333;
+        }
+
+        div {
+            background-color: #fff;
+            margin: 10px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+        }
+
+        h3 {
+            color: #555;
+        }
+
+        p {
+            color: #777;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #full, #high, #medium, #low, #empty {
+            height: 20px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        #full {
+            background-color: #4CAF50;
+        }
+
+        #high {
+            background-color: #8BC34A;
+        }
+
+        #medium {
+            background-color: #FFC107;
+        }
+
+        #low {
+            background-color: #FF9800;
+        }
+
+        #empty {
+            background-color: #F44336;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Smart Vase</h1>
+
+    <div class="temperatur">
+        <h3>Temperatur</h3>
+        <p id="temperature">Loading...</p>
+    </div>
+
+    <div class="luftfeuchtigkeit">
+        <h3>Luftfeuchtigkeit</h3>
+        <p id="humidity">Loading...</p>
+    </div>
+
+    <div class="wasserstand">
+        <h3>Wasserstand</h3>
+        <div id="waterLevel">Loading...</div>
+    </div>
+
+    <div class="water-counter">
+        <h2 id="counterWatered">Loading...</h2>
+        <p>heute schon gegossen</p>
+    </div>
+
+    <div class="ton-counter">
+        <h2 id="counterSoundPlayed">Loading...</h2>
+        <p>heute schon den Ton abgespielt</p>
+    </div>
+
+    <div class="ton-slider">
+        <h3>Abstand wann Ton abgespielt wird</h3>
+        <p id="triggerDistance">Loading...</p>
+    </div>
+
+    <div class="ton-button">
+        <button id="playSoundButton">Ton abspielen</button>
+    </div>
+
+    <div class="giess-slider">
+        <h3>Gießdauer</h3>
+        <p>(Hier kommt ein Slider hin)</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function updateDashboard(data) {
+                document.getElementById('temperature').textContent = `${data.temperature.toFixed(1)}°C`;
+                document.getElementById('humidity').textContent = `${data.humidity}%`;
+                document.getElementById('waterLevel').textContent = `${data.waterLevel.toFixed(1)}%`;
+                document.getElementById('counterWatered').textContent = `${data.counterWatered} mal`;
+                document.getElementById('counterSoundPlayed').textContent = `${data.counterSoundPlayed} mal`;
+                document.getElementById('triggerDistance').textContent = `${data.triggerDistance} cm`;
+
+                // Update water level bar colors based on percentage
+                const waterLevelElement = document.getElementById('waterLevel');
+                if (data.waterLevel >= 80) {
+                    waterLevelElement.style.backgroundColor = '#4CAF50'; // Full
+                } else if (data.waterLevel >= 60) {
+                    waterLevelElement.style.backgroundColor = '#8BC34A'; // High
+                } else if (data.waterLevel >= 40) {
+                    waterLevelElement.style.backgroundColor = '#FFC107'; // Medium
+                } else if (data.waterLevel >= 20) {
+                    waterLevelElement.style.backgroundColor = '#FF9800'; // Low
+                } else {
+                    waterLevelElement.style.backgroundColor = '#F44336'; // Empty
+                }
+            }
+
+            function fetchData() {
+                fetch('/values')
+                    .then(response => response.json())
+                    .then(data => updateDashboard(data))
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+
+            fetchData();
+
+            document.getElementById('playSoundButton').addEventListener('click', () => {
+                fetch('/playSound', {
+                    method: 'POST',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        fetchData(); // Refresh the data after playing the sound
+                    } else {
+                        console.error('Error playing sound:', response.statusText);
+                    }
+                })
+                .catch(error => console.error('Error playing sound:', error));
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -3,72 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel=„stylesheet„ href=„stylesheet.css„>
+    <link rel="stylesheet" href="stylesheet.css">
     <title>Smart Vase Dashboard</title>
-
-    <h1>Smart Vase</h1>
-
 </head>
 
 <body>
-    <div class="Temperatur">
+    <h1>Smart Vase</h1>
+
+    <div class="temperatur">
         <h3>Temperatur</h3>
-        <p>23°C</p> <!--Temporary Value-->
+        <p id="temperature">Loading...</p>
     </div>
 
-    <div class="Luftfeuchtigkeit">
+    <div class="luftfeuchtigkeit">
         <h3>Luftfeuchtigkeit</h3>
-        <p>50%</p> <!--Temporary Value-->
+        <p id="humidity">Loading...</p>
     </div>
 
-    <div class="Wasserstand">
+    <div class="wasserstand">
         <h3>Wasserstand</h3>
-        <div id="full">
-
-        </div>
-        <div id="high">
-
-        </div>
-        <div id="medium">
-
-        </div>
-        <div id="low">
-
-        </div>
-        <div id="empty">
-
-        </div>
+        <div id="waterLevel">Loading...</div>
     </div>
 
-    <div class="Water Counter">
-        <h2>3 mal</h2>
+    <div class="water-counter">
+        <h2 id="counterSoundPlayed">Loading...</h2>
         <p>heute schon gegossen</p>
     </div>
 
-    <div class="Ton Counter">
-        <h2>10 mal</h2>
-        <p>heute schon den Ton abgespielt</p>
+    <div class="ton-slider">
+        <h3>Abstand wann Ton abgespielt wird</h3>
+        <p id="triggerDistance">Loading...</p>
     </div>
 
-    <!--TODO: Slider einfügen-->
-    <div class="Ton Slider">
-        <h3>Abstand wann Ton abgespeilt wird</h3>
-        <p>(Hier kommt ein Slider hin)</p>
+    <div class="ton-button">
+        <button>Ton abspielen</button>
     </div>
 
-    <div class="Ton Button">
-        <button>
-            Ton abspielen
-        </button>
-    </div>
-
-    <!--TODO: Slider einfügen-->
-    <div class="Gieß Slider">
+    <div class="giess-slider">
         <h3>Gießdauer</h3>
         <p>(Hier kommt ein Slider hin)</p>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/values')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('temperature').textContent = `${data.temperature.toFixed(1)}°C`;
+                    document.getElementById('humidity').textContent = `${data.humidity}%`;
+                    document.getElementById('waterLevel').textContent = `${data.waterLevel.toFixed(1)}%`;
+                    document.getElementById('counterSoundPlayed').textContent = `${data.counterSoundPlayed} mal`;
+                    document.getElementById('triggerDistance').textContent = `${data.triggerDistance} cm`;
 
+                    // Update water level bar colors based on percentage
+                    const waterLevelElement = document.getElementById('waterLevel');
+                    if (data.waterLevel >= 80) {
+                        waterLevelElement.style.backgroundColor = '#4CAF50'; // Full
+                    } else if (data.waterLevel >= 60) {
+                        waterLevelElement.style.backgroundColor = '#8BC34A'; // High
+                    } else if (data.waterLevel >= 40) {
+                        waterLevelElement.style.backgroundColor = '#FFC107'; // Medium
+                    } else if (data.waterLevel >= 20) {
+                        waterLevelElement.style.backgroundColor = '#FF9800'; // Low
+                    } else {
+                        waterLevelElement.style.backgroundColor = '#F44336'; // Empty
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        });
+    </script>
 </body>
 
 </html>
